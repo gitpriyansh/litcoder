@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block body %}
+<header class="top">
+  <h1>{{ first.strftime('%B %Y') }}</h1>
+  <nav><a href="?month={{ prev }}">Previous</a><a href="?month={{ nxt }}">Next</a></nav>
+</header>
+
+<p class="verdict">
+  {% if not leader %}Tied so far. Nobody owes anybody a party.
+  {% elif month_over %}{{ leader.name }} won by ₹{{ lead_by }}. {{ loser.name }} owes the party.
+  {% else %}{{ leader.name }} leads by ₹{{ lead_by }}. {{ loser.name }} is on party duty if it stays this way.{% endif %}
+</p>
+
+<section class="duel">
+{% for b in boards %}
+  <article class="player">
+    <h2>{{ b.user.name }}</h2>
+    <div class="balance">₹{{ b.total }}</div>
+    <p class="counts"><strong>{{ b.solved_total }}</strong> problems solved · {{ b.counts.Easy }} easy · {{ b.counts.Medium }} medium · {{ b.counts.Hard }} hard</p>
+    <p class="muted">₹{{ b.daily }} daily + ₹{{ b.problem_pts }} problems + ₹{{ b.extra_pts }} extra-problem + ₹{{ b.bonus }} streak</p>
+
+    <div class="streak" aria-label="Streak {{ b.streak }} of {{ cfg.STREAK_LEN }}">
+      {% for i in range(cfg.STREAK_LEN) %}<span class="pip {{ 'on' if i < b.streak }}"></span>{% endfor %}
+      <small>{{ b.streak }}/{{ cfg.STREAK_LEN }} to the ₹{{ cfg.BONUS }} bonus</small>
+    </div>
+
+    <p class="today {{ 'done' if b.done_today else 'todo' }}">
+      {{ 'Solved ' ~ b.today_count ~ ' today.' if b.done_today else 'Nothing solved yet today.' }}
+    </p>
+
+    <div class="grid">
+      {% for _ in range(lead_in) %}<i></i>{% endfor %}
+      {% for c in b.cells %}
+        <span class="cell {{ c.state }} {{ 'bonus' if c.bonus }}" title="{{ c.date }} · {{ c.count }} solved">{{ c.date.day }}</span>
+      {% endfor %}
+    </div>
+  </article>
+{% endfor %}
+</section>
+
+<section class="actions">
+  <form method="post" action="{{ url_for('log') }}" class="row">
+    <select name="user_id">{% for u in users %}<option value="{{ u.id }}">{{ u.name }}</option>{% endfor %}</select>
+    <input name="problem" placeholder="two-sum" required>
+    <select name="difficulty"><option>Easy</option><option selected>Medium</option><option>Hard</option></select>
+    <input type="date" name="date" value="{{ today }}" max="{{ today }}">
+    <button>Log solve</button>
+  </form>
+  <form method="post" action="{{ url_for('sync') }}"><button class="ghost">Sync from LeetCode</button></form>
+</section>
+{% endblock %}

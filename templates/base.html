@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LC Duel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main>
+{% with msgs = get_flashed_messages() %}{% for m in msgs %}<p class="flash">{{ m }}</p>{% endfor %}{% endwith %}
+{% block body %}{% endblock %}
+</main>
+</body>
+</html>

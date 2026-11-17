@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Who's in the duel?</h1>
+<p class="muted">LeetCode usernames are optional. Without one, log solves by hand.</p>
+<form method="post" class="stack">
+  {% for i in (1, 2) %}
+  <fieldset>
+    <legend>Player {{ i }}</legend>
+    <label>Name <input name="name{{ i }}" required></label>
+    <label>LeetCode username <input name="lc{{ i }}"></label>
+  </fieldset>
+  {% endfor %}
+  <button>Start the duel</button>
+</form>
+{% endblock %}
